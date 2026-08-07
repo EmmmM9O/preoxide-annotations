@@ -91,6 +91,8 @@ class POIrGenerationExtension(val messageCollector: MessageCollector) : IrGenera
             var overrideIr: IrFunctionAccessExpression? = null
             val callListHead = mutableListOf<IrFunctionAccessExpression>()
             val callListEnd = mutableListOf<IrFunctionAccessExpression>()
+            val origin = implFunc.origin
+            val emptyBody = origin is GeneratedByPlugin && origin.pluginKey == PluginKeys.methodEntry
             compFuncs.forEach { (compFunc, anno) ->
               val compPN = compFunc.parentAsClass.classId!!.asSingleFqName().asString()
               val compFuncName = compFunc.name.asString()
@@ -102,7 +104,7 @@ class POIrGenerationExtension(val messageCollector: MessageCollector) : IrGenera
               val context = map[AnnoProps.context]!!.stringArr()
               val override = map[AnnoProps.override]!!.asBoolean()
               var overrideFlag = false
-              if (override) {
+              if (override && emptyBody) {
                 overrideFlag =
                   if (compFunc.returnType != implFunc.returnType) {
                     messageCollector.report(
@@ -153,9 +155,8 @@ class POIrGenerationExtension(val messageCollector: MessageCollector) : IrGenera
             info(
               "IR ${if(overrideIr == null) "Fill" else "Override"}:`$implClassName.$implFuncName`"
             )
-            val origin = implFunc.origin
 
-            if (origin is GeneratedByPlugin && origin.pluginKey == PluginKeys.methodEntry) {
+            if (emptyBody) {
               // EmptyBody
               val parentF =
                 implFunc.overriddenSymbols.firstOrNull()
