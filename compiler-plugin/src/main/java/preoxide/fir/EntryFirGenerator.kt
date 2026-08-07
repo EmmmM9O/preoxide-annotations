@@ -96,6 +96,15 @@ class EntryFirGenerator(
     target.parent()?.let { fillFatherFuncs(map, it) }
   }
 
+  fun ancestorsOf(fir: FirClass): List<FirClass> =
+    fir.superTypeRefs
+      .filterIsInstance<FirResolvedTypeRef>()
+      .map { it.coneType }
+      .filterIsInstance<ConeClassLikeType>()
+      .mapNotNull { it.toFir() }
+      .filter { it.classKind.isInterface }
+      .flatMap { listOf(it, *ancestorsOf(it).toTypedArray()) }
+
   override fun getCallableNamesForClass(
     classSymbol: FirClassSymbol<*>,
     context: MemberGenerationContext,
@@ -109,7 +118,9 @@ class EntryFirGenerator(
         .filterIsInstance<FirResolvedTypeRef>()
         .map { it.coneType }
         .filterIsInstance<ConeClassLikeType>()
-    val comps = parents.map { it.classId.asSingleFqName() }
+
+    val ancestors = ancestorsOf(fir)
+    val comps = ancestors.map { it.symbol.classId.asSingleFqName() }
     val fqName = classSymbol.classId.asSingleFqName()
     val all = processAll()
     if (!all.any { (_, symbols) -> symbols.any { (name, _) -> comps.contains(name) } }) {

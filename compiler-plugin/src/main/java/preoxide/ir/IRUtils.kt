@@ -1,5 +1,6 @@
 package preoxide.ir
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
@@ -31,6 +32,12 @@ fun IrClass.superClasses() =
     .filterIsInstance<IrSimpleType>()
     .map { it.classifier.owner }
     .filterIsInstance<IrClass>()
+
+@OptIn(UnsafeDuringIrConstructionAPI::class)
+fun IrClass.interfaceAncestors(): List<IrClass> =
+  superClasses()
+    .filter { it.kind == ClassKind.INTERFACE }
+    .flatMap { listOf(it, *it.interfaceAncestors().toTypedArray()) }
 
 // readonlyd
 @OptIn(UnsafeDuringIrConstructionAPI::class)

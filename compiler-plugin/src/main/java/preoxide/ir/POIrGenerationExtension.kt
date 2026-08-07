@@ -43,15 +43,16 @@ class POIrGenerationExtension(val messageCollector: MessageCollector) : IrGenera
     moduleFragment.acceptChildrenVoid(
       POFuncScanner(Annotations.MethodEntry, methodEntry, pluginContext)
     )
+
     val comps = methodEntry.keys.mapNotNull { it.parent as? IrClass }
     moduleFragment.acceptChildrenVoid(
       POClassFilter(implEntries, pluginContext) { impl ->
-        impl.superClasses().any { it in comps }
+        impl.interfaceAncestors().any { it in comps }
       }
     )
 
     implEntries.forEach { implClass ->
-      val stypes = implClass.superClasses()
+      val stypes = implClass.interfaceAncestors()
       /*List<IrSimpleFunction, IrAnnotation>*/
       stypes
         .flatMap { comp ->

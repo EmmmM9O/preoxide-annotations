@@ -45,6 +45,8 @@ interface TestOverrideComp {
   fun overrideRes(v: Int): String = "TestOverrideComp.overrideRes($v)"
 }
 
+interface TestOverrideComp2 : TestOverrideComp {}
+
 open class TestOverride {
   open fun work(value: Int): String = "TestOverride.work($value)"
 }
@@ -55,7 +57,7 @@ open class TestOverride1 : TestOverride(), TestOverrideComp {
 
 open class TestOverride2 : TestOverride(), TestOverrideComp {}
 
-class TestOverride3 : TestOverride2() {}
+class TestOverride3 : TestOverride(), TestOverrideComp2 {}
 
 fun main() {
   Test1().work()
