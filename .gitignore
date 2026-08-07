@@ -1,0 +1,9 @@
+.idea
+
+.kotlin
+.gradle
+.gradle/
+/lib
+build/
+
+.disable-kotlin-lsp
