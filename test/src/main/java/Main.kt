@@ -55,8 +55,7 @@ open class TestOverride1 : TestOverride(), TestOverrideComp {
 
 open class TestOverride2 : TestOverride(), TestOverrideComp {}
 
-class TestOverride3 : TestOverride2() {
-}
+class TestOverride3 : TestOverride2() {}
 
 fun main() {
   Test1().work()

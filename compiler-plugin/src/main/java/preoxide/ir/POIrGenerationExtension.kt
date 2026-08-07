@@ -92,7 +92,8 @@ class POIrGenerationExtension(val messageCollector: MessageCollector) : IrGenera
             val callListHead = mutableListOf<IrFunctionAccessExpression>()
             val callListEnd = mutableListOf<IrFunctionAccessExpression>()
             val origin = implFunc.origin
-            val emptyBody = origin is GeneratedByPlugin && origin.pluginKey == PluginKeys.methodEntry
+            val emptyBody =
+              origin is GeneratedByPlugin && origin.pluginKey == PluginKeys.methodEntry
             compFuncs.forEach { (compFunc, anno) ->
               val compPN = compFunc.parentAsClass.classId!!.asSingleFqName().asString()
               val compFuncName = compFunc.name.asString()
