@@ -49,11 +49,11 @@ open class TestOverride {
   open fun work(value: Int): String = "TestOverride.work($value)"
 }
 
-class TestOverride1 : TestOverride(), TestOverrideComp {
+open class TestOverride1 : TestOverride(), TestOverrideComp {
   override fun work(value: Int): String = "TestOverride1.work($value)"
 }
 
-class TestOverride2 : TestOverride(), TestOverrideComp {}
+open class TestOverride2 : TestOverride(), TestOverrideComp {}
 
 class TestOverride3 : TestOverride2() {
 }
