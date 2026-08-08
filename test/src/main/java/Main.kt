@@ -59,6 +59,14 @@ open class TestOverride2 : TestOverride(), TestOverrideComp {}
 
 class TestOverride3 : TestOverride(), TestOverrideComp2 {}
 
+interface TestComp2 : TestComp {}
+
+open class Test5() : TestComp2 {
+  open fun work() {
+    println("Test5.work() invoked")
+  }
+}
+
 fun main() {
   Test1().work()
   println("====")
@@ -73,4 +81,6 @@ fun main() {
   println(TestOverride2().work(630))
   println("====")
   println(TestOverride3().work(630))
+  println("====")
+  Test5().work()
 }

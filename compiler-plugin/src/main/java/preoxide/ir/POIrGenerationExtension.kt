@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.GeneratedByPlugin
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -56,9 +57,12 @@ class POIrGenerationExtension(val messageCollector: MessageCollector) : IrGenera
       /*List<IrSimpleFunction, IrAnnotation>*/
       stypes
         .flatMap { comp ->
-          comp.functions().mapNotNull { func ->
-            func.firstById(Annotations.MethodEntry)?.let { func to it }
-          }
+          comp
+            .functions()
+            .filter { it.origin == IrDeclarationOrigin.DEFINED }
+            .mapNotNull { func ->
+              func.firstById(Annotations.MethodEntry)?.let { func to it }
+            }
         }
         .forEach { (compFunc, anno) ->
           val target = anno.mapping()[AnnoProps.entryMethod]!!.asString()
