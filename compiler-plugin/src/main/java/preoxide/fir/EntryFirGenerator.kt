@@ -86,11 +86,11 @@ class EntryFirGenerator(
     val status = this.status
     val modality = status.modality
     val visibility = status.visibility
-    return modality == Modality.OPEN && visibility != Visibilities.Private
+    return visibility != Visibilities.Private
   }
 
   fun fillFatherFuncs(map: MutableMap<Name, FirNamedFunctionSymbol>, target: FirClass) {
-    target.symbol.declaredFunctions(session).forEach {
+    target.symbol.declarationSymbols.filterIsInstance<FirNamedFunctionSymbol>().forEach {
       if (it.fir.isSui()) map.putIfAbsent(it.name, it)
     }
     target.parent()?.let { fillFatherFuncs(map, it) }
@@ -159,7 +159,6 @@ class EntryFirGenerator(
       CompilerMessageSeverity.WARNING,
       "[PREOXIDE-INFO]: $text",
     )
-    System.err.println("info: $text")
   }
 
   fun interface EntryProcessor {
@@ -225,7 +224,7 @@ class EntryFirGenerator(
         ?: run {
           messageCollector.report(
             CompilerMessageSeverity.ERROR,
-            "@MethodEntry requires $name.But not found in class or its supertypes",
+            "@MethodEntry requires $name.But not found in ${fqName.asString()} or its supertypes",
           )
           return emptyList()
         }

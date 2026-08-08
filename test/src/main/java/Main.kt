@@ -67,6 +67,23 @@ open class Test5() : TestComp2 {
   }
 }
 
+open class TBlock{
+  open inner class TBuild{
+    open fun work(){
+      println("TBlock.TBuild.work()")
+    }
+  }
+}
+
+open class RBlock : TBlock(){
+  init{
+    RBuild().work()
+  }
+  open inner class RBuild: TBuild(), TestComp{
+
+  }
+}
+
 fun main() {
   Test1().work()
   println("====")
@@ -83,4 +100,6 @@ fun main() {
   println(TestOverride3().work(630))
   println("====")
   Test5().work()
+  println("====")
+  RBlock()
 }
